@@ -1,0 +1,2 @@
+# SmartCalendar
+Project on Django
