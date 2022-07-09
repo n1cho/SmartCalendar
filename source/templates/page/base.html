@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Smart Calendar</title>
+</head>
+<body>
+    <p>Smart Calendar
+    {% if user.is_authenticated %}
+	    Hello, {{ user.username }}.
+        <a href="{% url 'logout' %}">Log Out</a>
+    {% else %}
+	    <a href="{% url 'login' %}">log in</a>
+    {% endif %}
+    </p>
+    {% block content %}
+
+    {% endblock content %}
+</body>
+</html>
