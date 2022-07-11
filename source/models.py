@@ -5,6 +5,7 @@ class Calendar(models.Model):
     code = models.CharField(max_length=8)
     owner = models.ForeignKey(User,on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=64)
+    members = models.ManyToManyField(User,related_name='members')
 
     def __str__(self):
         return self.name

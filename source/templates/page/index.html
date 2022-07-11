@@ -2,4 +2,24 @@
 
 {% block content %}
 <p>index</p>
+{% if request.user.is_authenticated %}
+    {% if calendars %}
+        {% for c in calendars %}
+            {{c}}
+            <ul>
+                {% for m in c.members.all %}
+                    {% if m == c.owner %}    
+                        <li>{{m}} - Owner</li>
+                    {% else %}
+                        <li>{{m}}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    {% else %}
+            <p>Create you calendar, or connect another</p>
+    {% endif %}
+{% else %}
+    <p>Create an account to use all the site's features</p>
+{% endif %}
 {% endblock content %}
