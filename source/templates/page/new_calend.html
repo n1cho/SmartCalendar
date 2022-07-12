@@ -1,0 +1,11 @@
+{% extends "page/base.html" %}
+
+{% block content %}
+    <p>Create new calendar</p>
+    {{user}}
+    <form action="{% url 'new_calend' %}" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button name="submit">Create</button>
+    </form>
+{% endblock content %}
