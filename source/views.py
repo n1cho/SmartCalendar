@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 
 from .models import Calendar
-from .forms import CalendarForm
+from .forms import NewCalendarForm,EnterToCalendar
 
 def index(request):
     if request.user.is_authenticated:
@@ -19,9 +19,9 @@ def index(request):
 def new_calend(request):
     user = User.objects.get(id=request.user.id)
     if request.method != 'POST':
-        form = CalendarForm()
+        form = NewCalendarForm()
     else:
-        form = CalendarForm(request.POST)
+        form = NewCalendarForm(request.POST)
         if form.is_valid():
             new_calendar = form.save(commit=False)
             new_calendar.code = User.objects.make_random_password(8)
@@ -31,3 +31,23 @@ def new_calend(request):
             return HttpResponseRedirect(reverse('index'))
     context = {'form':form,'user':user}
     return render(request,'page/new_calend.html',context)
+
+
+def enter_calend(request):
+    error = False
+    if request.method != 'POST':
+        form = EnterToCalendar()
+        form_calendar = {}
+    else:
+        form = EnterToCalendar(request.POST)
+        if form.is_valid():
+            form_calendar = form.cleaned_data['code']
+            try:
+                calendar = Calendar.objects.get(code=form_calendar)
+                user = User.objects.get(id=request.user.id)
+                calendar.members.add(user)
+                return HttpResponseRedirect(reverse('index'))
+            except:
+                error = True
+    context = {'form':form,'error': error}
+    return render(request,'page/enter_calend.html',context)

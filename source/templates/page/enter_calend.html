@@ -1,0 +1,14 @@
+{% extends "page/base.html" %}
+
+{% block content %}
+    {% if error %}
+        <p>Bad code.</p>
+    {% endif %}
+    <p>Enter code calendar</p>
+    <form action="{% url 'enter_calend' %}" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button name="submit">Connect</button>
+        <input type="hidden" name="next" value="{% url 'index' %}" />
+    </form>
+{% endblock content %}

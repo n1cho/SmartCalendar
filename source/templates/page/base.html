@@ -5,7 +5,7 @@
     <title>Smart Calendar</title>
 </head>
 <body>
-    <p>Smart Calendar
+    <p><a href="{% url 'index' %}">Smart Calendar</a>
     {% if user.is_authenticated %}
 	    Hello, {{ user.username }}.
         <a href="{% url 'logout' %}">Log Out</a>
