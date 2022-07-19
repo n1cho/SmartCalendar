@@ -1,5 +1,5 @@
 from calendar import calendar
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 from django.urls import reverse
 from django.shortcuts import render
 from django.contrib.auth.models import User
@@ -15,6 +15,13 @@ def index(request):
     else:
         context = {}
     return render(request,'page/index.html',context)
+
+def edit_members(request):
+    id_user = request.GET.get('value')
+    user = User.objects.get(id=id_user)
+    calendar = Calendar.objects.get(id=request.GET.get('calend'))
+    calendar.members.remove(user)
+    return HttpResponse('success')
 
 def new_calend(request):
     user = User.objects.get(id=request.user.id)

@@ -11,7 +11,26 @@
                     {% if m == c.owner %}    
                         <li>{{m}} - Owner</li>
                     {% else %}
-                        <li>{{m}}</li>
+                        <li>{{m}}
+                        {% if c.owner == request.user %}
+                            <button onclick='myFunction("{{m.id}}","{{c.id}}")'>delete</button>
+                            <script>
+                                function myFunction(value,calend){
+                                    $.ajax({
+                                        url: 'edit_members/',
+                                        type: 'GET', // This is the default though, you don't actually need to always mention it
+                                        data: {'value':value,'calend':calend},
+                                        success: function(data) {
+                                            location.reload();
+                                        },
+                                        failure: function(data) { 
+                                            alert('Got an error dude');
+                                        }
+                                    }); 
+                                };
+                            </script>
+                        {% endif %}
+                        </li>
                     {% endif %}
                 {% endfor %}
             </ul>
