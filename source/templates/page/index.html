@@ -2,6 +2,23 @@
 
 {% block content %}
 <p>index</p>
+<div сlass="default_calendar">
+    {% for default_calendar in default_calendars %}
+        {% for month,week in default_calendar.items %}
+        <div class="month">
+            <ul><li>{{month}}</li> <p></p>
+            {% for week_day,days in week.items %}
+                {{week_day}}
+                {% for day in days %}
+                    {{day}}
+                {% endfor %}
+                <p></p>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    {% endfor %}
+</div>
 {% if request.user.is_authenticated %}
     {% if calendars %}
         {% for c in calendars %}

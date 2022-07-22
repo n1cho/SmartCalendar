@@ -1,19 +1,22 @@
-from calendar import calendar
+import calendar as calend
 from django.http import HttpResponseRedirect,HttpResponse
 from django.urls import reverse
 from django.shortcuts import render
 from django.contrib.auth.models import User
 
+import re # regex
+from datetime import datetime
 
 from .models import Calendar
 from .forms import NewCalendarForm,EnterToCalendar
 
 def index(request):
+    default_calendars = [CreateDefaultCalendar(month=datetime.now().month-1),CreateDefaultCalendar(),CreateDefaultCalendar(month=datetime.now().month+1)]
     if request.user.is_authenticated:
         calendars = Calendar.objects.filter(members=request.user).order_by('name')
-        context = {'calendars':calendars}
+        context = {'calendars':calendars,'default_calendars':default_calendars}
     else:
-        context = {}
+        context = {'default_calendars':default_calendars}
     return render(request,'page/index.html',context)
 
 def edit_members(request):
@@ -58,3 +61,19 @@ def enter_calend(request):
                 error = True
     context = {'form':form,'error': error}
     return render(request,'page/enter_calend.html',context)
+
+def CreateDefaultCalendar(year=datetime.now().year,month=datetime.now().month,today=datetime.now().day):
+    calendar = {}
+    get_calendar_days = calend.Calendar()
+    calendar[calend.month_name[month]] = {}
+    i = 0
+    while i<7:
+        calendar[calend.month_name[month]][calend.day_name[i]] = []
+        i+=1
+    for days in get_calendar_days.itermonthdays2 (year,month):
+        day,week_day = re.findall("\d+", str(days))
+        if day != '0':
+            if str(today) == day and month==datetime.now().month:
+                day = "("+day + ')'
+            calendar[calend.month_name[month]][calend.day_name[int(week_day)]].append(day)
+    return calendar
