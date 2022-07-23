@@ -8,7 +8,7 @@
 <body>
     <p><a href="{% url 'index' %}">Smart Calendar</a>
     {% if user.is_authenticated %}
-	    Hello, {{ user.username }}.
+	    User: {{ user.username }}.
         <a href="{% url 'logout' %}">Log Out</a>
     {% else %}
 	    <a href="{% url 'login' %}">log in</a>

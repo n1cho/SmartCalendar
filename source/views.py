@@ -7,13 +7,17 @@ from django.contrib.auth.models import User
 import re # regex
 from datetime import datetime
 
-from .models import Calendar
+from .models import Calendar,Notification
 from .forms import NewCalendarForm,EnterToCalendar
 
 def index(request):
     default_calendars = [CreateDefaultCalendar(month=datetime.now().month-1),CreateDefaultCalendar(),CreateDefaultCalendar(month=datetime.now().month+1)]
     if request.user.is_authenticated:
         calendars = Calendar.objects.filter(members=request.user).order_by('name')
+        for calendar in calendars:
+            notfs = Notification.objects.filter(calendar=calendar).order_by('data_to_notf')
+            for default_calendar in default_calendars:
+                default_calendar = UpdateCalendarToNotifications(default_calendar,notfs)
         context = {'calendars':calendars,'default_calendars':default_calendars}
     else:
         context = {'default_calendars':default_calendars}
@@ -62,18 +66,30 @@ def enter_calend(request):
     context = {'form':form,'error': error}
     return render(request,'page/enter_calend.html',context)
 
-def CreateDefaultCalendar(year=datetime.now().year,month=datetime.now().month,today=datetime.now().day):
+def CreateDefaultCalendar(year=datetime.now().year,month=datetime.now().month):
     calendar = {}
     get_calendar_days = calend.Calendar()
     calendar[calend.month_name[month]] = {}
     i = 0
     while i<7:
-        calendar[calend.month_name[month]][calend.day_name[i]] = []
+        calendar[calend.month_name[month]][calend.day_name[i]] = {}
         i+=1
     for days in get_calendar_days.itermonthdays2 (year,month):
         day,week_day = re.findall("\d+", str(days))
         if day != '0':
-            if str(today) == day and month==datetime.now().month:
-                day = "("+day + ')'
-            calendar[calend.month_name[month]][calend.day_name[int(week_day)]].append(day)
+            calendar[calend.month_name[month]][calend.day_name[int(week_day)]][day] = {}
     return calendar
+
+def UpdateCalendarToNotifications(calendar,notfs):
+    get_calendar_days = calend.Calendar()
+    if notfs:
+        for notf in notfs:
+            if notf:
+                y,m,d=re.findall("\d+",str(notf.data_to_notf)) # y-year,m-month,d-day
+                for days in get_calendar_days.itermonthdays2 (int(y),int(m)):
+                    day,week_day = re.findall("\d+", str(days))
+                    if calend.month_name[int(m)] in calendar:
+                        if int(d) == int(day):
+                            calendar[calend.month_name[int(m)]][calend.day_name[int(week_day)]][d]=notf
+    return calendar
+                

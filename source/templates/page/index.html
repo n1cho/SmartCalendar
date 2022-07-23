@@ -7,10 +7,13 @@
         {% for month,week in default_calendar.items %}
         <div class="month">
             <ul><li>{{month}}</li> <p></p>
-            {% for week_day,days in week.items %}
+            {% for week_day,all_days in week.items %}
                 {{week_day}}
-                {% for day in days %}
+                {% for day,notf in all_days.items %}
                     {{day}}
+                    {% if notf %}
+                        {{notf}} ({{notf.calendar}},by:{{notf.create_notf}},{{notf.date_added}})
+                    {% endif %}
                 {% endfor %}
                 <p></p>
             {% endfor %}
